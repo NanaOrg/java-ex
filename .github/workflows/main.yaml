@@ -1,6 +1,8 @@
 name: Meterian Scanner workflow
 
-on: push
+on:
+    pull_request:
+        types: synchronize
 
 jobs:
     meterian_scan_autofix:
