@@ -1,22 +1,36 @@
-name: Meterian Scanner workflow
+name: "upload_sarif"
 
-on: push
+# Run workflow each time code is pushed to your repository and on a schedule.
+on: [push]
 
 jobs:
-    meterian_scan_autofix:
-        name: Meterian scan
-        runs-on: ubuntu-latest
-        steps: 
-          - name: Checkout
-            uses: actions/checkout@v3
-          - name: Meterian Scanner
-            uses: MeterianHQ/meterian-github-action@correct-branch-adjustments
-            env:
-              METERIAN_API_TOKEN: ${{ secrets.METERIAN_API_TOKEN }}
-#               GITHUB_TOKEN: ${{ github.token }}
-              GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-              ALWAYS_OPEN_PRS: true
-            with:
-              autofix_security: safe
-              autofix_with_pr: true
-              autofix_with_report: true
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+    steps:
+      # This step checks out a copy of your repository.
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Scan repository
+        uses: MeterianHQ/meterian-github-action@v1.0.13
+        env: 
+           METERIAN_API_TOKEN: ${{secrets.METERIAN_API_TOKEN}}
+           CLIENT_CANARY_FLAG: "--canary"
+        with:
+           cli_args: "--report-sarif=report.sarif"
+
+      - name: Upload SARIF file
+        if: success() || failure()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: report.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: my-analysis-tool
