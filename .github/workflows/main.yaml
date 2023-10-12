@@ -17,7 +17,8 @@ jobs:
               GITHUB_TOKEN: ${{ secrets.GH_PAT }}
               ALWAYS_OPEN_PRS: true
             with:
-              autofix_security: safe
-              autofix_with_pr: true
-              autofix_with_report: true
+              # autofix_security: safe
+              # autofix_with_pr: true
+              # autofix_with_report: true
+              cli_args: --scopes=prod
               
