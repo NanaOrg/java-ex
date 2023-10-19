@@ -20,5 +20,5 @@ jobs:
               # autofix_security: safe
               # autofix_with_pr: true
               # autofix_with_report: true
-              cli_args: --scopes=prod
+              cli_args: --scopes=prod --report-console:stability
               
