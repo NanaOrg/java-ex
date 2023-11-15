@@ -1,24 +1,23 @@
-name: Meterian Scanner workflow
+name: Snyk Security
 
 on: push
 
+permissions:
+  contents: read
+
 jobs:
-    meterian_scan_autofix:
-        name: Meterian scan
-        runs-on: ubuntu-latest
-        steps: 
-          - name: Checkout
-            uses: actions/checkout@v3
-          - name: Meterian Scanner
-            uses: MeterianHQ/meterian-github-action@correct-branch-adjustments
-            env:
-              METERIAN_API_TOKEN: ${{ secrets.METERIAN_API_TOKEN }}
-#               GITHUB_TOKEN: ${{ github.token }}
-              GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-              ALWAYS_OPEN_PRS: true
-            with:
-              # autofix_security: safe
-              # autofix_with_pr: true
-              # autofix_with_report: true
-              cli_args: --scopes=prod --report-console:stability
-              
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven-3-jdk-11@master
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
