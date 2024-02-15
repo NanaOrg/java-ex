@@ -24,7 +24,7 @@
                   "stability"
                 ],
                 "precision": "very-high",
-                "security-severity": "1"
+                "security-severity": "0"
               }
             },
             {
