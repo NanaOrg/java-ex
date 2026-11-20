@@ -24,6 +24,7 @@ jobs:
               autofix_security: conservative
               autofix_with_pr: true
               # autofix_with_report: true
+              cli_args: --debug
               # cli_args: --scopes=prod --report-console:stability
               #cli_args: --flags:gradle.root.only=false,cli.param.report.tree.included=true --report-json=./meterian-report.json         
 
